@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">RufEinsatz</string>
     <string name="action_settings">Settings</string>
+    <string name="datum">Datum</string>
+    <string name="dauer">Dauer</string>
+    <string name="aufgabe">Aufgabe</string>
+    <string name="todo">Was war zutun</string>
+    <string name="save">Speichern</string>
 </resources>
