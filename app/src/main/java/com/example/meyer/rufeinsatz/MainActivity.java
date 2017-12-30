@@ -1,5 +1,6 @@
 package com.example.meyer.rufeinsatz;
 
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,8 +10,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    EntryDB entryDB;
+    List<RufEinsatzEintrag> EinsatzListe;
+    ListView lvEinsatz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").build();
+        lvEinsatz=(ListView) findViewById(R.id.EinsatzListe);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +69,17 @@ public class MainActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this,InputActivity.class);
         startActivity(intent);
+    }
+
+    void GetData()
+    {
+        try {
+            EinsatzListe = entryDB.daoAccess().findEinsatz();
+
+        } catch (Exception ex)
+        {
+            Toast.makeText(this,ex.getMessage(),Toast.LENGTH_SHORT);
+        }
     }
 
 
