@@ -31,38 +31,22 @@ public class InputActivity extends AppCompatActivity {
         getInformation();
     }
 
-
-
     void getInformation()
     {
         SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd  HH:mm");
         EditText etDate=(EditText)findViewById(R.id.etDatum);
-
         etDate.setText(simpleDateFormat.format(Calendar.getInstance().getTime()));
     }
-
-    public void DateClick(View view) {
-
-    }
-
-
 
     public void Speichern(View view) {
         try {
             RufEinsatzEintrag rufEinsatzEintrag=new RufEinsatzEintrag();
             rufEinsatzEintrag.set_datum(((EditText)findViewById(R.id.etDatum)).getText().toString());
             entryDB.daoAccess().insertEntry(rufEinsatzEintrag);
-
-            Toast.makeText(this,"gespeichert",Toast.LENGTH_SHORT);
-
         } catch (Exception ex)
         {
-            Log.e("sme\tspeichern",ex.getMessage());
-            Toast.makeText(this,ex.getMessage(),Toast.LENGTH_SHORT);
+            Log.e("sme",ex.getMessage());
         }
-
-
+        Toast.makeText(this,"gespeichert",Toast.LENGTH_SHORT);
     }
-
-
 }
