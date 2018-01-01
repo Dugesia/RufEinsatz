@@ -8,6 +8,7 @@ import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -26,7 +27,7 @@ public class InputActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
-        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").build();
+        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").allowMainThreadQueries().build();
         getInformation();
     }
 
@@ -50,8 +51,15 @@ public class InputActivity extends AppCompatActivity {
         try {
             RufEinsatzEintrag rufEinsatzEintrag=new RufEinsatzEintrag();
             rufEinsatzEintrag.set_datum(((EditText)findViewById(R.id.etDatum)).getText().toString());
+            try {
+                entryDB.daoAccess().insertEntry(rufEinsatzEintrag);
+            }
+            catch (Exception ex)
+            {
+                Log.e("sme",ex.getMessage().toString());
+            }
+            Toast.makeText(this,"gespeichert",Toast.LENGTH_SHORT);
 
-            entryDB.daoAccess().insertEntry(rufEinsatzEintrag);
         } catch (Exception ex)
         {
             Toast.makeText(this,ex.getMessage(),Toast.LENGTH_SHORT);

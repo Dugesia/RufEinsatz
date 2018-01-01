@@ -19,6 +19,6 @@ public interface DaoAccess {
     void deleteEntry(RufEinsatzEintrag rufEinsatzEintrag);
 
     @Query("SELECT * FROM RufEinsatzEintrag")
-    List<RufEinsatzEintrag> findEinsatz();
+    List<RufEinsatzEintrag> getAll();
 
 }

@@ -7,9 +7,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -29,15 +31,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").build();
+        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").allowMainThreadQueries().build();
         lvEinsatz=(ListView) findViewById(R.id.EinsatzListe);
-
+        GetData();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 OpenInputActivity(view);
             }
         });
@@ -73,13 +73,29 @@ public class MainActivity extends AppCompatActivity {
 
     void GetData()
     {
+        ArrayList<RufEinsatzEintrag> temp=new ArrayList<RufEinsatzEintrag>();
+
         try {
-            EinsatzListe = entryDB.daoAccess().findEinsatz();
+            EinsatzListe = entryDB.daoAccess().getAll();
+            temp=ConvertToList(EinsatzListe);
+            Log.e("sme","erfolg");
 
         } catch (Exception ex)
         {
-            Toast.makeText(this,ex.getMessage(),Toast.LENGTH_SHORT);
+            Log.e("sme",ex.getMessage().toString());
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.item_list,R.id.Datum,temp);
+        
+    }
+
+    public ArrayList<RufEinsatzEintrag> ConvertToList(List<RufEinsatzEintrag> Liste)
+    {
+        ArrayList<RufEinsatzEintrag> tmp=new ArrayList<RufEinsatzEintrag>();
+        for (RufEinsatzEintrag item:Liste) {
+            tmp.add(item);
+        }
+        return tmp;
     }
 
 
