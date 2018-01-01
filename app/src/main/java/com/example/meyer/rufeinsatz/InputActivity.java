@@ -51,17 +51,13 @@ public class InputActivity extends AppCompatActivity {
         try {
             RufEinsatzEintrag rufEinsatzEintrag=new RufEinsatzEintrag();
             rufEinsatzEintrag.set_datum(((EditText)findViewById(R.id.etDatum)).getText().toString());
-            try {
-                entryDB.daoAccess().insertEntry(rufEinsatzEintrag);
-            }
-            catch (Exception ex)
-            {
-                Log.e("sme",ex.getMessage().toString());
-            }
+            entryDB.daoAccess().insertEntry(rufEinsatzEintrag);
+
             Toast.makeText(this,"gespeichert",Toast.LENGTH_SHORT);
 
         } catch (Exception ex)
         {
+            Log.e("sme\tspeichern",ex.getMessage());
             Toast.makeText(this,ex.getMessage(),Toast.LENGTH_SHORT);
         }
 
