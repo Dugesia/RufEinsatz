@@ -13,12 +13,12 @@ import java.util.List;
 @Dao
 public interface DaoAccess {
     @Insert
-    void insertEntry(RufEinsatzEintrag rufEinsatzEintrag);
+    void insertEntry(ItemEntry itemEntry);
 
     @Delete
-    void deleteEntry(RufEinsatzEintrag rufEinsatzEintrag);
+    void deleteEntry(ItemEntry itemEntry);
 
-    @Query("SELECT * FROM RufEinsatzEintrag")
-    List<RufEinsatzEintrag> getAll();
+    @Query("SELECT * FROM ItemEntry")
+    List<ItemEntry> getAll();
 
 }

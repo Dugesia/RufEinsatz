@@ -13,6 +13,4 @@ public class DBAsync extends AsyncTask {
     protected Object doInBackground(Object[] objects) {
         return null;
     }
-
-
 }

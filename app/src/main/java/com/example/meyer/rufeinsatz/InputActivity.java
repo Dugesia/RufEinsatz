@@ -1,23 +1,18 @@
 package com.example.meyer.rufeinsatz;
 
-import android.app.DatePickerDialog;
-import android.arch.persistence.db.SupportSQLiteOpenHelper;
-import android.arch.persistence.room.DatabaseConfiguration;
-import android.arch.persistence.room.InvalidationTracker;
 import android.arch.persistence.room.Room;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.DatePicker;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ListView;
+import android.widget.Spinner;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Map;
 
 public class InputActivity extends AppCompatActivity {
 
@@ -27,26 +22,37 @@ public class InputActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
-        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").allowMainThreadQueries().build();
+        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").fallbackToDestructiveMigration().allowMainThreadQueries().build();
         getInformation();
+
+        Spinner spinner =(Spinner)findViewById(R.id.input_spinner);
+        String[] durationList = getResources().getStringArray(R.array.duration);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, durationList);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        spinner.setAdapter(dataAdapter);
     }
 
     void getInformation()
     {
         SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd  HH:mm");
-        EditText etDate=(EditText)findViewById(R.id.etDatum);
+        EditText etDate=(EditText)findViewById(R.id.etDate);
         etDate.setText(simpleDateFormat.format(Calendar.getInstance().getTime()));
     }
 
     public void Speichern(View view) {
         try {
-            RufEinsatzEintrag rufEinsatzEintrag=new RufEinsatzEintrag();
-            rufEinsatzEintrag.set_datum(((EditText)findViewById(R.id.etDatum)).getText().toString());
-            entryDB.daoAccess().insertEntry(rufEinsatzEintrag);
+            ItemEntry itemEntry=new ItemEntry();
+            itemEntry.setDate(((EditText)findViewById(R.id.etDate)).getText().toString());
+            itemEntry.setDuration(((Spinner)findViewById(R.id.input_spinner)).getSelectedItem().toString());
+            itemEntry.setTask(((EditText)findViewById(R.id.etTask)).getText().toString());
+            entryDB.daoAccess().insertEntry(itemEntry);
+            setResult(0);
         } catch (Exception ex)
         {
             Log.e("sme",ex.getMessage());
+            setResult(1);
         }
-        Toast.makeText(this,"gespeichert",Toast.LENGTH_SHORT);
+        Intent intent = new Intent(this,MainActivity.class);
+        this.startActivity(intent);
     }
 }

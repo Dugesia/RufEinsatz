@@ -25,7 +25,7 @@
                 android:text="@string/datum" />
 
             <EditText
-                android:id="@+id/etDatum"
+                android:id="@+id/etDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -43,27 +43,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:labelFor="@+id/etTime"
+                android:labelFor="@+id/etDuration"
                 android:text="@string/dauer" />
 
-            <EditText
-                android:id="@+id/etTime"
+            <Spinner
+                android:id="@+id/input_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="15:00"
-                android:inputType="time" />
+                android:layout_weight="1" />
+
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:labelFor="@id/etAufgabe"
+            android:labelFor="@id/etTask"
             android:text="@string/aufgabe" />
 
         <EditText
-            android:id="@+id/etAufgabe"
+            android:id="@+id/etTask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/todo"
@@ -75,6 +73,8 @@
             android:layout_height="wrap_content"
             android:onClick="Speichern"
             android:text="@string/save" />
+
+
 
 
     </LinearLayout>

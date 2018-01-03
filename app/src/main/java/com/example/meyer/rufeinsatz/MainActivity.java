@@ -2,11 +2,8 @@ package com.example.meyer.rufeinsatz;
 
 import android.arch.persistence.room.Room;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,10 +11,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,7 +19,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     EntryDB entryDB;
-    List<RufEinsatzEintrag> EinsatzListe;
+    List<ItemEntry> itemEntries;
+    ArrayList<ItemEntry> itemEntryArrayList;
     ListView lvEinsatz;
 
     @Override
@@ -45,34 +40,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void initDB()
-    {
-        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").allowMainThreadQueries().build();
-        lvEinsatz=(ListView) findViewById(R.id.EinsatzListe);
-        GetData();
-        lvEinsatz.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                ListView lv= (ListView)findViewById(R.id.EinsatzListe);
-                RufEinsatzEintrag einsatz=(RufEinsatzEintrag)lv.getItemAtPosition(pos);
-                try {
-                    entryDB.daoAccess().deleteEntry(einsatz);
-                    initDB();
-                }catch (Exception ex){
-                    Log.e("sme",ex.getMessage());
-                }
-                return false;
-            }
-        });
-    }
-
-    void removeItem(){
-    }
-
-    void deleteItems(View view){
-        Toast.makeText(this,"Delete",Toast.LENGTH_SHORT);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -88,34 +55,78 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void OpenInputActivity( View view)
+    public void initDB()
     {
-        Intent intent = new Intent(this,InputActivity.class);
-        startActivity(intent);
+        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        lvEinsatz=(ListView) findViewById(R.id.EinsatzListe);
+        refreshDB();
+        setLongClickListeners(lvEinsatz);
+        setCLickListener(lvEinsatz);
     }
 
-    void GetData()
+    void refreshDB()
     {
-        ArrayList<RufEinsatzEintrag> temp=new ArrayList<RufEinsatzEintrag>();
+        itemEntryArrayList=new ArrayList<ItemEntry>();
         try {
-            EinsatzListe = entryDB.daoAccess().getAll();
-            temp=ConvertToList(EinsatzListe);
+            itemEntries = entryDB.daoAccess().getAll();
+            itemEntryArrayList=ConvertToList(itemEntries);
         } catch (Exception ex)
         {
             Log.e("sme",ex.getMessage().toString());
         }
-        EinsatzAdapter einsatzAdapter =new EinsatzAdapter(this,R.layout.item_list,temp);
+        ItemEntryAdapter einsatzAdapter =new ItemEntryAdapter(this,R.layout.item_list,itemEntryArrayList);
         lvEinsatz.setAdapter(einsatzAdapter);
     }
 
-    public ArrayList<RufEinsatzEintrag> ConvertToList(List<RufEinsatzEintrag> Liste)
+    void setLongClickListeners(View view){
+        ((ListView)view).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                ListView lv= (ListView)findViewById(R.id.EinsatzListe);
+                ItemEntry itemEntry=(ItemEntry)lv.getItemAtPosition(pos);
+                try {
+                    entryDB.daoAccess().deleteEntry(itemEntry);
+                    refreshDB();
+                }catch (Exception ex){
+                    Log.e("sme",ex.getMessage());
+                }
+                return false;
+            }
+        });
+    }
+
+    void setCLickListener(View view)
     {
-        ArrayList<RufEinsatzEintrag> tmp=new ArrayList<RufEinsatzEintrag>();
-        for (RufEinsatzEintrag item:Liste) {
+        ((ListView)view).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
+                Toast.makeText(view.getContext(),itemEntry.getTask(),Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    void OpenInputActivity(View view)
+    {
+        int i=1;
+        Intent intent = new Intent(this,InputActivity.class);
+        startActivityForResult(intent,i);
+        if (i==0){
+            Toast.makeText(this,"saved",Toast.LENGTH_SHORT);
+        }
+        refreshDB();
+    }
+
+    public ArrayList<ItemEntry> ConvertToList(List<ItemEntry> Liste)
+    {
+        ArrayList<ItemEntry> tmp=new ArrayList<ItemEntry>();
+        for (ItemEntry item:Liste) {
             tmp.add(item);
         }
         return tmp;
     }
 
-
+    void deleteItems(View view){
+        Toast.makeText(this,"Delete",Toast.LENGTH_SHORT);
+    }
 }
