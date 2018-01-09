@@ -2,13 +2,13 @@ package com.example.meyer.rufeinsatz;
 
 import android.arch.persistence.room.Room;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 
 import java.text.SimpleDateFormat;
@@ -17,12 +17,15 @@ import java.util.Calendar;
 public class InputActivity extends AppCompatActivity {
 
     EntryDB entryDB;
+    DBAsync dbAsync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
-        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").build();
+        dbAsync=new DBAsync(entryDB);
+
         getInformation();
 
         Spinner spinner =(Spinner)findViewById(R.id.input_spinner);
@@ -45,14 +48,15 @@ public class InputActivity extends AppCompatActivity {
             itemEntry.setDate(((EditText)findViewById(R.id.etDate)).getText().toString());
             itemEntry.setDuration(((Spinner)findViewById(R.id.input_spinner)).getSelectedItem().toString());
             itemEntry.setTask(((EditText)findViewById(R.id.etTask)).getText().toString());
-            entryDB.daoAccess().insertEntry(itemEntry);
+
+            dbAsync.insert(itemEntry);
+
             setResult(0);
         } catch (Exception ex)
         {
             Log.e("sme",ex.getMessage());
             setResult(1);
         }
-        Intent intent = new Intent(this,MainActivity.class);
-        this.startActivity(intent);
+        this.finish();
     }
 }

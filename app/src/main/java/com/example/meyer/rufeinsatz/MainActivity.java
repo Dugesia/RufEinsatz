@@ -1,7 +1,9 @@
 package com.example.meyer.rufeinsatz;
 
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -19,9 +21,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     EntryDB entryDB;
+    DBAsync dbAsync;
     List<ItemEntry> itemEntries;
     ArrayList<ItemEntry> itemEntryArrayList;
     ListView lvEinsatz;
+    Migration[] migrations = new Migration[]{DBAsync.MIGRATION_1_2,DBAsync.MIGRATION_2_3,DBAsync.MIGRATION_3_4};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPostResume() {
+        refreshDB();
+        super.onPostResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -57,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void initDB()
     {
-        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").addMigrations(migrations).build();
+        dbAsync=new DBAsync(entryDB);
         lvEinsatz=(ListView) findViewById(R.id.EinsatzListe);
         refreshDB();
         setLongClickListeners(lvEinsatz);
@@ -66,15 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
     void refreshDB()
     {
-        itemEntryArrayList=new ArrayList<ItemEntry>();
-        try {
-            itemEntries = entryDB.daoAccess().getAll();
-            itemEntryArrayList=ConvertToList(itemEntries);
-        } catch (Exception ex)
-        {
-            Log.e("sme",ex.getMessage().toString());
-        }
-        ItemEntryAdapter einsatzAdapter =new ItemEntryAdapter(this,R.layout.item_list,itemEntryArrayList);
+        itemEntries=dbAsync.getAll();
+        ItemEntryAdapter einsatzAdapter =new ItemEntryAdapter(this,R.layout.item_list,itemEntries);
         lvEinsatz.setAdapter(einsatzAdapter);
     }
 
@@ -85,7 +89,9 @@ public class MainActivity extends AppCompatActivity {
                 ListView lv= (ListView)findViewById(R.id.EinsatzListe);
                 ItemEntry itemEntry=(ItemEntry)lv.getItemAtPosition(pos);
                 try {
-                    entryDB.daoAccess().deleteEntry(itemEntry);
+
+                    dbAsync.delete(itemEntry);
+
                     refreshDB();
                 }catch (Exception ex){
                     Log.e("sme",ex.getMessage());
@@ -117,16 +123,7 @@ public class MainActivity extends AppCompatActivity {
         refreshDB();
     }
 
-    public ArrayList<ItemEntry> ConvertToList(List<ItemEntry> Liste)
-    {
-        ArrayList<ItemEntry> tmp=new ArrayList<ItemEntry>();
-        for (ItemEntry item:Liste) {
-            tmp.add(item);
-        }
-        return tmp;
-    }
-
-    void deleteItems(View view){
-        Toast.makeText(this,"Delete",Toast.LENGTH_SHORT);
+    public void mSettings(MenuItem item) {
+        Toast.makeText(this,"keine Einstellungen",Toast.LENGTH_SHORT).show();
     }
 }
