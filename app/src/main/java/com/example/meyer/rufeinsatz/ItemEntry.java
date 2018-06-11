@@ -9,6 +9,7 @@ import android.arch.persistence.room.PrimaryKey;
  */
 @Entity
 public class ItemEntry {
+
     @PrimaryKey(autoGenerate = true)
     private int _id;
 
@@ -28,6 +29,10 @@ public class ItemEntry {
         return Task;
     }
 
+    public boolean getAbgerechnet() {
+        return Abgerechnet;
+    }
+
     @ColumnInfo(name = "datum")
     private String Date;
 
@@ -36,6 +41,9 @@ public class ItemEntry {
 
     @ColumnInfo(name = "einsatz")
     private String Task;
+
+    @ColumnInfo(name = "abgerechnet")
+    private boolean Abgerechnet;
 
 
     public void set_id(int _id) {
@@ -52,5 +60,9 @@ public class ItemEntry {
 
     public void setTask(String _Task) {
         this.Task = _Task;
+    }
+
+    public void setAbgerechnet(boolean _Abgerechnet) {
+        this.Abgerechnet = _Abgerechnet;
     }
 }

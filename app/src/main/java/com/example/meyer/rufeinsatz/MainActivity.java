@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     List<ItemEntry> itemEntries;
     ArrayList<ItemEntry> itemEntryArrayList;
     ListView lvEinsatz;
-    Migration[] migrations = new Migration[]{DBAsync.MIGRATION_1_2,DBAsync.MIGRATION_2_3,DBAsync.MIGRATION_3_4};
+    Migration[] migrations = new Migration[]{DBAsync.MIGRATION_1_2,DBAsync.MIGRATION_2_3,DBAsync.MIGRATION_3_4,DBAsync.MIGRATION_4_5};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,11 +103,21 @@ public class MainActivity extends AppCompatActivity {
 
     void setCLickListener(View view)
     {
+        /*
         ((ListView)view).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
                 Toast.makeText(view.getContext(),itemEntry.getTask(),Toast.LENGTH_LONG).show();
+            }
+        });*/
+        ((ListView)view).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
+                itemEntry.setAbgerechnet(!itemEntry.getAbgerechnet());
+                dbAsync.update(itemEntry);
+                refreshDB();
             }
         });
     }

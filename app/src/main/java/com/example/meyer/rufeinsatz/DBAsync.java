@@ -4,6 +4,7 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.content.ClipData;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.List;
 
@@ -27,22 +28,33 @@ public class DBAsync {
         new ASyncInsert().execute(itemEntry);
     }
 
+    public void update(ItemEntry itemEntry){
+        new ASyncUpdate().execute(itemEntry);
+    }
+
     public List<ItemEntry> getAll(){
         List<ItemEntry> itemEntries=null;
         try {
             itemEntries=new ASyncGetAll().execute().get();
         }catch (Exception ex)
         {
-
         }
         return itemEntries;
-
     }
 
     private class ASyncGetAll extends AsyncTask<Void,Void,List<ItemEntry>>{
         @Override
         protected List<ItemEntry> doInBackground(Void... voids) {
             return db.daoAccess().getAll();
+        }
+    }
+
+    private class ASyncUpdate extends AsyncTask<ItemEntry, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(ItemEntry... itemEntries) {
+            db.daoAccess().updateEntry(itemEntries[0]);
+            return null;
         }
     }
 
@@ -70,8 +82,6 @@ public class DBAsync {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            //database.execSQL("CREATE TABLE `Fruit` (`id` INTEGER, "
-            //        + "`name` TEXT, PRIMARY KEY(`id`))");
             database.execSQL("CREATE TABLE 'ItemEntry' ('_id' INTEGER,'datum' varchar(20),'dauer' varchar(10),'einsatz' Text ,Primary KEY('_id')");
         }
     };
@@ -79,14 +89,26 @@ public class DBAsync {
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-
         }
     };
 
     static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE 'ItemEntry' ('_id' INTEGER,'datum' varchar(20),'dauer' varchar(10),'einsatz' Text ,Primary KEY('_id')");
+        }
+    };
 
+    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            try {
+                database.execSQL("ALTER TABLE 'ItemEntry' ADD 'abgerechnet' tinyint;  ");
+            }
+            catch (Exception ex)
+            {
+                Log.d("sme\t",ex.getMessage());
+            }
         }
     };
 
