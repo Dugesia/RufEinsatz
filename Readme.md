@@ -1,7 +1,8 @@
-# todo
-* Einfügen des Schlüssels
-* eine bessere Datenmigration
+﻿# todo
+* Einfügen des AbrechnungsSchlüssels
 * Verdienst berechnen
+* eine bessere Datenmigration
+
 
 # Fehler
 * keine Direkten
@@ -10,3 +11,4 @@
 
 # Verbesserungen
 * Checkbox für Abrechnungstatus
+	* macht die Listviews kaputt

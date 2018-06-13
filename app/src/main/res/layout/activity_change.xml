@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.meyer.rufeinsatz.InputActivity">
+    tools:context="com.example.meyer.rufeinsatz.ChangeActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -47,10 +47,11 @@
                 android:text="@string/dauer" />
 
             <Spinner
-                android:id="@+id/input_spinner"
+                android:id="@+id/change_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
+
         </LinearLayout>
 
         <TextView
@@ -67,10 +68,21 @@
             android:layout_weight="1"
             android:singleLine="false" />
 
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Abgerechnet" />
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="Speichern"
-            android:text="@string/save" />
+            android:text="@string/update" />
+
+
+
+
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

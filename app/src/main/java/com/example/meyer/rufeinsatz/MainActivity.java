@@ -3,7 +3,6 @@ package com.example.meyer.rufeinsatz;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        initDB();
+        InitDB();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void initDB()
+    public void InitDB()
     {
         entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").addMigrations(migrations).build();
         dbAsync=new DBAsync(entryDB);
@@ -103,23 +102,28 @@ public class MainActivity extends AppCompatActivity {
 
     void setCLickListener(View view)
     {
-        /*
         ((ListView)view).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
-                Toast.makeText(view.getContext(),itemEntry.getTask(),Toast.LENGTH_LONG).show();
-            }
-        });*/
-        ((ListView)view).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
-                itemEntry.setAbgerechnet(!itemEntry.getAbgerechnet());
-                dbAsync.update(itemEntry);
+                //itemEntry.setAbgerechnet(!itemEntry.getAbgerechnet());
+                OpenChangeActivity(view,itemEntry.get_id());
+
                 refreshDB();
             }
         });
+    }
+
+    void OpenChangeActivity(View view,int ID)
+    {
+        int i=1;
+        Intent intent = new Intent(this,ChangeActivity.class);
+        intent.putExtra("ID",ID);
+        startActivityForResult(intent,i);
+        if (i==0){
+            Toast.makeText(this,"changed",Toast.LENGTH_SHORT);
+        }
+        refreshDB();
     }
 
     void OpenInputActivity(View view)

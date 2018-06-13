@@ -30,17 +30,20 @@ public class ItemEntryAdapter extends ArrayAdapter<ItemEntry> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, parent, false);
         }
-        TextView tvDatum=(TextView)convertView.findViewById(R.id.Datum);
+        TextView tvDatum = convertView.findViewById(R.id.Datum);
+        TextView tvDuration = convertView.findViewById(R.id.Dauer);
+        TextView tvInfo =convertView.findViewById(R.id.Info);
+
         tvDatum.setText(Einsatz.getDate());
-        TextView tvDuration =(TextView)convertView.findViewById(R.id.Dauer);
         tvDuration.setText(Einsatz.getDuration());
-        TextView tvInfo =(TextView)convertView.findViewById(R.id.Info);
         tvInfo.setText(Einsatz.getTask());
 
-        if (Einsatz.getAbgerechnet())
-        {
-            tvInfo.setText("abgerechnet\n"+Einsatz.getTask());
-        }
-        return convertView;
+        if(!Einsatz.getAbgerechnet())
+		{
+			tvInfo.setText("! nicht abgerechnet\n"+Einsatz.getTask());
+		}
+
+
+		return convertView;
     }
 }

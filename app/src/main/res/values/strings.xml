@@ -6,6 +6,8 @@
     <string name="aufgabe">Aufgabe</string>
     <string name="todo">Was war zutun</string>
     <string name="save">Speichern</string>
+    <string name="update">Ändern</string>
+    <string name="invoice">Abgerechnet</string>
     <string-array name="duration">
         <item>15 min</item>
         <item>30 min</item>

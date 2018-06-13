@@ -32,6 +32,17 @@ public class DBAsync {
         new ASyncUpdate().execute(itemEntry);
     }
 
+    public ItemEntry getByID(int id)
+    {
+        ItemEntry itemEntrie=null;
+        try {
+            itemEntrie=new ASyncGetByID().execute(id).get();
+        }catch (Exception ex)
+        {
+        }
+        return itemEntrie;
+    }
+
     public List<ItemEntry> getAll(){
         List<ItemEntry> itemEntries=null;
         try {
@@ -46,6 +57,13 @@ public class DBAsync {
         @Override
         protected List<ItemEntry> doInBackground(Void... voids) {
             return db.daoAccess().getAll();
+        }
+    }
+
+    private class ASyncGetByID extends AsyncTask<Integer,Void,ItemEntry>{
+        @Override
+        protected ItemEntry doInBackground(Integer... integers) {
+            return db.daoAccess().getID(integers[0]);
         }
     }
 
