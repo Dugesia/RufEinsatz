@@ -8,6 +8,7 @@
     <string name="save">Speichern</string>
     <string name="update">Ändern</string>
     <string name="invoice">Abgerechnet</string>
+    <string name="action_report">Report</string>
     <string-array name="duration">
         <item>15 min</item>
         <item>30 min</item>

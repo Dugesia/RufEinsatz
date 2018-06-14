@@ -1,6 +1,7 @@
 package com.example.meyer.rufeinsatz;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -38,9 +39,13 @@ public class ItemEntryAdapter extends ArrayAdapter<ItemEntry> {
         tvDuration.setText(Einsatz.getDuration());
         tvInfo.setText(Einsatz.getTask());
 
-        if(!Einsatz.getAbgerechnet())
+        if(Einsatz.getAbgerechnet())
 		{
-			tvInfo.setText("! nicht abgerechnet\n"+Einsatz.getTask());
+            tvInfo.setTextColor(Color.LTGRAY);
+		}
+		else
+		{
+			tvInfo.setTextColor(Color.BLACK);
 		}
 
 

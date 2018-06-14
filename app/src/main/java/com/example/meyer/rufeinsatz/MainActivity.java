@@ -19,51 +19,62 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    EntryDB entryDB;
-    DBAsync dbAsync;
-    List<ItemEntry> itemEntries;
-    ArrayList<ItemEntry> itemEntryArrayList;
-    ListView lvEinsatz;
-    Migration[] migrations = new Migration[]{DBAsync.MIGRATION_1_2,DBAsync.MIGRATION_2_3,DBAsync.MIGRATION_3_4,DBAsync.MIGRATION_4_5};
+	EntryDB entryDB;
+	DBAsync dbAsync;
+	List<ItemEntry> itemEntries;
+	ArrayList<ItemEntry> itemEntryArrayList;
+	ListView lvEinsatz;
+	Migration[] migrations = new Migration[]{DBAsync.MIGRATION_1_2, DBAsync.MIGRATION_2_3, DBAsync.MIGRATION_3_4, DBAsync.MIGRATION_4_5};
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        InitDB();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		InitDB();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                OpenInputActivity(view);
-            }
-        });
-    }
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				OpenInputActivity(view);
+			}
+		});
+	}
 
-    @Override
-    protected void onPostResume() {
-        refreshDB();
-        super.onPostResume();
-    }
+	@Override
+	protected void onPostResume() {
+		refreshDB();
+		super.onPostResume();
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_main, menu);
+		return true;
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		if
+		(id == R.id.action_report) {
+			OpenReportActivity();
+			return true;
+		}
 
+		return super.onOptionsItemSelected(item);
+	}
+
+	public void OpenReportActivity()
+	{
+		Intent intent =new Intent(this,ReportActivity.class);
+		startActivity(intent);
+	}
     public void InitDB()
     {
         entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").addMigrations(migrations).build();
@@ -88,13 +99,10 @@ public class MainActivity extends AppCompatActivity {
                 ListView lv= (ListView)findViewById(R.id.EinsatzListe);
                 ItemEntry itemEntry=(ItemEntry)lv.getItemAtPosition(pos);
                 try {
-
                     dbAsync.delete(itemEntry);
-
                     refreshDB();
-                }catch (Exception ex){
-                    Log.e("sme",ex.getMessage());
-                }
+                }catch (Exception ex)
+                {}
                 return false;
             }
         });
@@ -106,9 +114,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
-                //itemEntry.setAbgerechnet(!itemEntry.getAbgerechnet());
                 OpenChangeActivity(view,itemEntry.get_id());
-
                 refreshDB();
             }
         });
