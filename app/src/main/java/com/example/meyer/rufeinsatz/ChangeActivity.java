@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class ChangeActivity extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class ChangeActivity extends AppCompatActivity {
     public void SetupView()
     {
         Spinner spinner = findViewById(R.id.change_spinner);
+        Spinner spinnerDayType = findViewById(R.id.spinnerDayType);
         EditText etAufgabe = findViewById(R.id.etTask);
         EditText etDate = findViewById(R.id.etDate);
         CheckBox cbInvoce = findViewById(R.id.checkBox);
@@ -42,9 +44,18 @@ public class ChangeActivity extends AppCompatActivity {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spinner.setAdapter(dataAdapter);
 
-        itemEntry =dbAsync.getByID(getIntent().getExtras().getInt("ID"));
+        String[] arrayDayType = getResources().getStringArray(R.array.arrayDayType);
+        ArrayAdapter<String> daDayType = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, arrayDayType);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        spinnerDayType.setAdapter(daDayType);
 
-        spinner.setSelection(getIntent().getExtras().getInt("ID"));
+        itemEntry = dbAsync.getByID(getIntent().getExtras().getInt("ID"));
+
+		int i= ((Arrays.asList(arrayDayType)).indexOf(itemEntry.getDayType()));
+
+        spinner.setSelection((Arrays.asList(durationList)).indexOf(itemEntry.getDuration()));
+        spinnerDayType.setSelection((Arrays.asList(arrayDayType)).indexOf(itemEntry.getDayType()));
+
         cbInvoce.setChecked(itemEntry.getAbgerechnet());
         etAufgabe.setText(itemEntry.getTask());
         etDate.setText(itemEntry.getDate());
@@ -59,13 +70,13 @@ public class ChangeActivity extends AppCompatActivity {
             itemEntry.setDuration(((Spinner)findViewById(R.id.change_spinner)).getSelectedItem().toString());
             itemEntry.setTask(((EditText)findViewById(R.id.etTask)).getText().toString());
             itemEntry.setAbgerechnet(((CheckBox)findViewById(R.id.checkBox)).isChecked());
+			itemEntry.setDayType(((Spinner)findViewById(R.id.spinnerDayType)).getSelectedItem().toString());
 
             dbAsync.update(itemEntry);
 
             setResult(0);
         } catch (Exception ex)
         {
-            Log.e("sme",ex.getMessage());
             setResult(1);
         }
         this.finish();

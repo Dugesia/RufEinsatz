@@ -124,9 +124,19 @@ public class DBAsync {
                 database.execSQL("ALTER TABLE 'ItemEntry' ADD 'abgerechnet' tinyint;  ");
             }
             catch (Exception ex)
-            {
-                Log.d("sme\t",ex.getMessage());
+            {}
+        }
+    };
+
+    static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            try {
+            	database.execSQL("Drop table 'ItemEntry'");
+				database.execSQL("CREATE TABLE 'ItemEntry' ('_id' INTEGER,'datum' varchar(20),'dauer' varchar(10),'einsatz' Text ,Primary KEY('_id'), 'abgerechnet' tinyint,'DayType' varchar(20)");
             }
+            catch (Exception ex)
+            {}
         }
     };
 

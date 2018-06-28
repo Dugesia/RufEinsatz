@@ -39,6 +39,12 @@ public class InputActivity extends AppCompatActivity {
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, durationList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spinner.setAdapter(dataAdapter);
+
+        Spinner spinnerDayType = findViewById(R.id.spinnerDayType);
+        String[] arrayDayType = getResources().getStringArray(R.array.arrayDayType);
+        ArrayAdapter<String> daDayType = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, arrayDayType);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+		spinnerDayType.setAdapter(daDayType);
     }
 
     void getInformation()
@@ -54,6 +60,7 @@ public class InputActivity extends AppCompatActivity {
             itemEntry.setDate(((EditText)findViewById(R.id.etDate)).getText().toString());
             itemEntry.setDuration(((Spinner)findViewById(R.id.input_spinner)).getSelectedItem().toString());
             itemEntry.setTask(((EditText)findViewById(R.id.etTask)).getText().toString());
+            itemEntry.setDayType(((Spinner)findViewById(R.id.spinnerDayType)).getSelectedItem().toString());
 
             dbAsync.insert(itemEntry);
 

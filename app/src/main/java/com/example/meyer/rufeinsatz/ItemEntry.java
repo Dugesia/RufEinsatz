@@ -33,6 +33,10 @@ public class ItemEntry {
         return Abgerechnet;
     }
 
+    public String getDayType() {
+        return DayType;
+    }
+
     @ColumnInfo(name = "datum")
     private String Date;
 
@@ -45,6 +49,8 @@ public class ItemEntry {
     @ColumnInfo(name = "abgerechnet")
     private boolean Abgerechnet;
 
+    @ColumnInfo(name="DayType")
+    private String DayType;
 
     public void set_id(int _id) {
         this._id = _id;
@@ -64,5 +70,9 @@ public class ItemEntry {
 
     public void setAbgerechnet(boolean _Abgerechnet) {
         this.Abgerechnet = _Abgerechnet;
+    }
+
+    public void setDayType(String _DayType) {
+        this.DayType = _DayType;
     }
 }

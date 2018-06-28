@@ -1,8 +1,12 @@
 package com.example.meyer.rufeinsatz;
 
 import android.arch.persistence.room.Room;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebView;
 
 import java.util.List;
@@ -20,6 +24,16 @@ public class ReportActivity extends AppCompatActivity {
 
 		entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").build();
 		dbAsync=new DBAsync(entryDB);
+
+
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabSend);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				SendReport();
+			}
+		});
+
 
 		WebView wbReport=findViewById(R.id.wbReport);
 
@@ -43,5 +57,15 @@ public class ReportActivity extends AppCompatActivity {
 
 		wbReport.loadData(Html, "text/html", "UTF-8");
 
+	}
+
+	public void SendReport()
+	{
+		Intent intent = new Intent(Intent.ACTION_SENDTO);
+		Uri uri = Uri.parse("mailto:");
+		intent.setData(uri);
+		intent.putExtra("subject", "Report");
+		intent.putExtra("body", Html);
+		startActivity(intent);
 	}
 }

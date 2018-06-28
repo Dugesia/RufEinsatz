@@ -3,6 +3,7 @@ package com.example.meyer.rufeinsatz;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 	List<ItemEntry> itemEntries;
 	ArrayList<ItemEntry> itemEntryArrayList;
 	ListView lvEinsatz;
-	Migration[] migrations = new Migration[]{DBAsync.MIGRATION_1_2, DBAsync.MIGRATION_2_3, DBAsync.MIGRATION_3_4, DBAsync.MIGRATION_4_5};
+	Migration[] migrations = new Migration[]{DBAsync.MIGRATION_1_2, DBAsync.MIGRATION_2_3, DBAsync.MIGRATION_3_4, DBAsync.MIGRATION_4_5, DBAsync.MIGRATION_5_6};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,27 @@ public class MainActivity extends AppCompatActivity {
 	{
 		Intent intent =new Intent(this,ReportActivity.class);
 		startActivity(intent);
+		//String Message="";
+		//Message=String.format("%s;%s;%s\n","Datum","Dauer","Aufgabe");
+		//for(int i=0;i<itemEntries.size();i++)
+		//{
+		//	Message=Message+String.format("%s;%s;%s\n",itemEntries.get(i).getDate(),itemEntries.get(i).getDuration(),itemEntries.get(i).getTask());
+		//}
+		//SendReport(Message);
+
 	}
+
+	public void SendReport(String Message)
+	{
+		Intent intent = new Intent(Intent.ACTION_SENDTO);
+		Uri uri = Uri.parse("mailto:");
+		intent.setData(uri);
+		intent.putExtra("subject", "Report");
+		intent.putExtra("body", Message);
+		startActivity(intent);
+	}
+
+
     public void InitDB()
     {
         entryDB = Room.databaseBuilder(getApplicationContext(), EntryDB.class,"Daten_DB").addMigrations(migrations).build();
