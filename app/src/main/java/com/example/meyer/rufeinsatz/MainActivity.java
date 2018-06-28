@@ -1,5 +1,6 @@
 package com.example.meyer.rufeinsatz;
 
+import android.annotation.TargetApi;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Intent;
@@ -9,11 +10,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -39,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				OpenInputActivity(view);
+				OpenInputActivity();
 			}
 		});
 	}
@@ -75,14 +79,6 @@ public class MainActivity extends AppCompatActivity {
 	{
 		Intent intent =new Intent(this,ReportActivity.class);
 		startActivity(intent);
-		//String Message="";
-		//Message=String.format("%s;%s;%s\n","Datum","Dauer","Aufgabe");
-		//for(int i=0;i<itemEntries.size();i++)
-		//{
-		//	Message=Message+String.format("%s;%s;%s\n",itemEntries.get(i).getDate(),itemEntries.get(i).getDuration(),itemEntries.get(i).getTask());
-		//}
-		//SendReport(Message);
-
 	}
 
 	public void SendReport(String Message)
@@ -102,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         dbAsync=new DBAsync(entryDB);
         lvEinsatz=(ListView) findViewById(R.id.EinsatzListe);
         refreshDB();
-        setLongClickListeners(lvEinsatz);
         setCLickListener(lvEinsatz);
     }
 
@@ -113,35 +108,62 @@ public class MainActivity extends AppCompatActivity {
         lvEinsatz.setAdapter(einsatzAdapter);
     }
 
-    void setLongClickListeners(View view){
-        ((ListView)view).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                ListView lv= (ListView)findViewById(R.id.EinsatzListe);
-                ItemEntry itemEntry=(ItemEntry)lv.getItemAtPosition(pos);
-                try {
-                    dbAsync.delete(itemEntry);
-                    refreshDB();
-                }catch (Exception ex)
-                {}
-                return false;
-            }
-        });
-    }
-
     void setCLickListener(View view)
     {
-        ((ListView)view).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
-                OpenChangeActivity(view,itemEntry.get_id());
-                refreshDB();
-            }
-        });
+		((ListView)view).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+				showPopup(view,i);
+			}
+		});
+
     }
 
-    void OpenChangeActivity(View view,int ID)
+	public void showPopup(View v, final int index) {
+		PopupMenu popup = new PopupMenu(this, v);
+		popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem menuItem) {
+				switch (menuItem.getItemId()) {
+					case R.id.popupOpen:
+						popUpOpen(index);
+						return true;
+					case R.id.popupDelete:
+						popUpDelete(index);
+						return true;
+					default:
+						return false;
+				}
+			}
+		});
+		MenuInflater inflater = popup.getMenuInflater();
+
+		inflater.inflate(R.menu.menu_popup, popup.getMenu());
+
+		popup.show();
+	}
+
+
+	void popUpOpen(int i)
+	{
+		ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
+		OpenChangeActivity(itemEntry.get_id());
+		refreshDB();
+	}
+
+	void popUpDelete(int i)
+	{
+		ItemEntry itemEntry = (ItemEntry) ((ListView)findViewById(R.id.EinsatzListe)).getItemAtPosition(i);
+		try {
+			dbAsync.delete(itemEntry);
+			refreshDB();
+		}catch (Exception ex)
+		{
+			Toast.makeText(this,ex.getMessage(),Toast.LENGTH_SHORT);
+		}
+	}
+
+    void OpenChangeActivity(int ID)
     {
         int i=1;
         Intent intent = new Intent(this,ChangeActivity.class);
@@ -153,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         refreshDB();
     }
 
-    void OpenInputActivity(View view)
+    void OpenInputActivity()
     {
         int i=1;
         Intent intent = new Intent(this,InputActivity.class);
